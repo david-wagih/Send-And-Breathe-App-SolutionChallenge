@@ -113,12 +113,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(200, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
                       ),
                       child: const Text(
-                        'LOGIN',
+                        'Login',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.0,
@@ -147,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                       child: const Text(
-                        'SIGN UP',
+                        'Sign Up',
                         style: TextStyle(
                           color: Colors.green,
                           fontSize: 16.0,
