@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../components/BottomNavBar.dart';
+import '../report_waste/ReportScreen.dart';
+import '../request_cleanup/request_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -26,13 +28,27 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildCard(
                 image: 'assets/report-trash.png',
                 title: 'Make a Report',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReportScreen(),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 20),
               _buildCard(
                 image: 'assets/cleanup.png',
                 title: 'Request to Cleanup',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RequestScreen(),
+                    ),
+                  );
+                },
               ),
             ],
           ),

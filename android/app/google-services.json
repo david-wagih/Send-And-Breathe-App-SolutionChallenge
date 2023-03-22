@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "665462057150",
+    "project_id": "sendandbreathe",
+    "storage_bucket": "sendandbreathe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665462057150:android:107629edf7dad961fe96ef",
+        "android_client_info": {
+          "package_name": "com.solutionchallenge.sendandbreathe.sendandbreathe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "665462057150-lg1qb297lvjmftmv92bc724snscntmte.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.solutionchallenge.sendandbreathe.sendandbreathe",
+            "certificate_hash": "84f206b161faab5a39fecca559ade414a24bc104"
+          }
+        },
+        {
+          "client_id": "665462057150-98a4p1i14l6r4cllnoe9271biittjihv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAb7-um4QvZdPEQ61Bgp5CyNBPbGoo6BgQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "665462057150-98a4p1i14l6r4cllnoe9271biittjihv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "665462057150-mh4ko40b9f0ueg3mk92er7qpo9ons4j7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.solutionchallenge.sendandbreathe.sendandbreathe"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

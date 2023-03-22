@@ -14,6 +14,22 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>sendandbreathe</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Allow the app to access your location while you are using the app.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Allow the app to access your location even when you are not using the app.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+		<string>location</string>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow access to camera for taking photos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow access to photo library to select photos</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow access to microphone for recording videos with sound</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
