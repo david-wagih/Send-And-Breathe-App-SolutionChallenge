@@ -1,0 +1,10 @@
+Django
+joblib
+Keras
+numpy
+pandas
+scikit-learn
+sklearn
+tensorflow
+djangorestframework
+pillow
