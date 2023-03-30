@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
+import '../processImage.dart';
 
 class ReportScreen extends StatefulWidget {
   const ReportScreen({super.key});
@@ -26,90 +27,108 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Future<void> _reportWaste() async {
+    final result = await processImage(File(_imageFile!.path));
     // Upload the image to Firebase Storage
-    final Reference storageRef = FirebaseStorage.instance
-        .ref()
-        .child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
-    final UploadTask uploadTask = storageRef.putFile(File(_imageFile!.path));
+    if (result['result'] == 'garbage') {
+      final Reference storageRef = FirebaseStorage.instance
+          .ref()
+          .child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+      final UploadTask uploadTask = storageRef.putFile(File(_imageFile!.path));
 
-    // Create a stream to track the upload progress
-    final Stream<TaskSnapshot> stream = uploadTask.snapshotEvents;
+      // Create a stream to track the upload progress
+      final Stream<TaskSnapshot> stream = uploadTask.snapshotEvents;
 
-    // Store the details in Firebase Firestore
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      // Request location permission on the same thread
-      final location = Location();
-      final permissionStatus = await location.requestPermission();
-      if (permissionStatus == PermissionStatus.granted) {
-        final currentLocation = await location.getLocation();
-        final locationData =
-            GeoPoint(currentLocation.latitude!, currentLocation.longitude!);
+      // Store the details in Firebase Firestore
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        // Request location permission on the same thread
+        final location = Location();
+        final permissionStatus = await location.requestPermission();
+        if (permissionStatus == PermissionStatus.granted) {
+          final currentLocation = await location.getLocation();
+          final locationData =
+              GeoPoint(currentLocation.latitude!, currentLocation.longitude!);
 
-        // Show a loading dialog while the image is being uploaded
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            int percentage = 0;
+          // Show a loading dialog while the image is being uploaded
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              int percentage = 0;
 
-            // Use a StreamBuilder to update the UI based on the upload progress
-            return StreamBuilder<TaskSnapshot>(
-              stream: stream,
-              builder:
-                  (BuildContext context, AsyncSnapshot<TaskSnapshot> snapshot) {
-                if (snapshot.hasData) {
-                  final progress = (snapshot.data!.bytesTransferred /
-                          snapshot.data!.totalBytes) *
-                      100;
-                  percentage = progress.toInt();
+              // Use a StreamBuilder to update the UI based on the upload progress
+              return StreamBuilder<TaskSnapshot>(
+                stream: stream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<TaskSnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    final progress = (snapshot.data!.bytesTransferred /
+                            snapshot.data!.totalBytes) *
+                        100;
+                    percentage = progress.toInt();
 
-                  // Update the percentage indicator
-                  return AlertDialog(
-                    content: Row(
-                      children: [
-                        CircularProgressIndicator(value: progress / 100),
-                        SizedBox(width: 20),
-                        Text('$percentage%'),
-                      ],
-                    ),
-                  );
-                } else {
-                  // Show a generic loading indicator while waiting for the upload to start
-                  return AlertDialog(
-                    content: Row(
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(width: 20),
-                        Text('Uploading...'),
-                      ],
-                    ),
-                  );
-                }
-              },
-            );
-          },
-        );
+                    // Update the percentage indicator
+                    return AlertDialog(
+                      content: Row(
+                        children: [
+                          CircularProgressIndicator(value: progress / 100),
+                          SizedBox(width: 20),
+                          Text('$percentage%'),
+                        ],
+                      ),
+                    );
+                  } else {
+                    // Show a generic loading indicator while waiting for the upload to start
+                    return AlertDialog(
+                      content: Row(
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(width: 20),
+                          Text('Uploading...'),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              );
+            },
+          );
 
-        // Wait for the upload to complete and dismiss the loading dialog
-        await uploadTask.whenComplete(() => Navigator.pop(context));
+          // Wait for the upload to complete and dismiss the loading dialog
+          await uploadTask.whenComplete(() => Navigator.pop(context));
 
-        await FirebaseFirestore.instance.collection('waste_reports').add({
-          'user_id': user.uid,
-          'image_url': await storageRef.getDownloadURL(),
-          'description': _descriptionController.text,
-          'location': locationData,
-          'timestamp': DateTime.now(),
-        });
+          await FirebaseFirestore.instance.collection('waste_reports').add({
+            'user_id': user.uid,
+            'image_url': await storageRef.getDownloadURL(),
+            'description': _descriptionController.text,
+            'location': locationData,
+            'timestamp': DateTime.now(),
+          });
 
-        // Show a success message to the user
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Report submitted successfully!'),
-          ),
-        );
-        Navigator.pushNamed(context, '/home');
+          // Show a success message to the user
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Report submitted successfully!'),
+            ),
+          );
+          Navigator.pushNamed(context, '/home');
+        }
       }
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('No Waste Detected'),
+          content: Text(
+              'The image you uploaded does not contain any waste. Please upload a different image.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
     }
   }
 

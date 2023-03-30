@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../login/LoginScreen.dart';
+import '../processImage.dart';
 
 class SubmitRequest extends StatefulWidget {
   final String wasteReportId;
@@ -35,36 +36,35 @@ class _SubmitRequestState extends State<SubmitRequest> {
   }
 
   void _reportWaste() async {
-    print(widget.wasteReportId);
+    //print(widget.wasteReportId);
+    final result = await processImage(File(_imageFile!.path));
+    if (result['result'] == 'clean') {
+      final user = FirebaseAuth.instance.currentUser;
+      final userDocRef =
+          FirebaseFirestore.instance.collection('users').doc(user!.uid);
 
-    final user = FirebaseAuth.instance.currentUser;
-    final userDocRef =
-        FirebaseFirestore.instance.collection('users').doc(user!.uid);
+      await FirebaseFirestore.instance
+          .collection('waste_reports')
+          .doc(widget.wasteReportId)
+          .delete()
+          .then((value) => print('Waste report deleted'))
+          .catchError(
+              (error) => print('Failed to delete waste report: $error'));
 
-    await FirebaseFirestore.instance
-        .collection('waste_reports')
-        .doc(widget.wasteReportId)
-        .delete()
-        .then((value) => print('Waste report deleted'))
-        .catchError((error) => print('Failed to delete waste report: $error'));
+      await userDocRef.update({'credits': FieldValue.increment(50)});
 
-    await userDocRef.update({'credits': FieldValue.increment(100)});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Congratulations, You\'ve done it!'),
+        ),
+      );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Congratulations, You\'ve done it!'),
-      ),
-    );
-
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => LoginScreen()),
-    );
-  }
-
-// todo this one will be the machine learning part
-  Future<bool> processImage(String imagePath) async {
-    // Add code to process image here
-    return true;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    } else {
+      return;
+    }
   }
 
   @override
