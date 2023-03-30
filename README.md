@@ -8,12 +8,12 @@ Flutter SDK installed on your local machine. You can download it from the offici
 An emulator or a physical device to run the app on.
 ### Installing dependencies
 Before running the app, you need to install its dependencies. To do so, navigate to the project directory and run the following command in your terminal:
-flutter pub get
+```flutter pub get```
 This will install all the required dependencies for the app.
 
 ### Running the app
 To run the app, you need to start an emulator or connect a physical device to your computer. Then, navigate to the project directory and run the following command in your terminal:
-flutter run
+```flutter run```
 This will start the app on the connected device or emulator.
 
 ### Further help
